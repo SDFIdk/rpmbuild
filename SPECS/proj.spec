@@ -1,6 +1,6 @@
 %define PACKAGE_NAME proj
-%define PACKAGE_VERSION 4.9.3
-%define PACKAGE_URL http://trac.osgeo.org/proj
+%define PACKAGE_VERSION 5.2.0
+%define PACKAGE_URL https://proj4.org/index.html
 %define _prefix /usr
 
 
@@ -8,11 +8,9 @@ Summary: Cartographic projection software
 Name: %PACKAGE_NAME
 Version: %PACKAGE_VERSION
 Release: 1
-Source0: proj-4.9.3.tar.gz
+Source0: proj-5.2.0.tar.gz
 License: MIT License, Copyright (c) 2000, Frank Warmerdam
 Group: Applications/GIS
-Vendor: Intevation GmbH <http://intevation.net>
-Distribution: FreeGIS CD
 
 BuildRoot: %{_builddir}/%{name}-root
 Prefix: %{_prefix}
@@ -25,7 +23,7 @@ forward and inverse transformation of cartographic data to or from cartesian
 data with a wide range of selectable projection functions.
 
 %package devel
-Summary:	Development files for PROJ.4
+Summary:	Development files for PROJ
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -34,7 +32,7 @@ This package contains libproj and the appropriate header files and man pages.
 
 
 %prep
-%setup -D -n proj-4.9.3
+%setup -D -n proj-5.2.0
 %configure
 
 %build
@@ -49,7 +47,7 @@ cd /usr/lib64/    #Changes diretory to lib64
 ln -sf libproj.so.12.0.0 libproj.so.0 #Creates symbolic link libproj.so.0 from libproj.so.12.0.0 
 
 %clean
-rm -rf %{_builddir}/proj-4.9.3
+rm -rf %{_builddir}/proj-5.2.0
 rm -rf $RPM_BUILD_ROOT
 
 %files
@@ -70,3 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_libdir}/libproj.la
 
 %doc AUTHORS COPYING ChangeLog NEWS README
+
+%changelog
+* Wed Nov 28 2018 Jonas Lund Nielsen <jolni@sdfe.dk> 2.0.0
+- Proj 5.2.0 to be built on RHEL7

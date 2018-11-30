@@ -1,21 +1,23 @@
-%define PACKAGE_NAME proj
-%define PACKAGE_VERSION 5.2.0
+%define %{name} proj
+%define %{version} 5.2.0
 %define PACKAGE_URL https://proj4.org/index.html
 %define _prefix /usr
 
 
 Summary: Cartographic projection software
-Name: %PACKAGE_NAME
-Version: %PACKAGE_VERSION
+Name: %{name}
+Version: %{version}
 Release: 1
-Source0: proj-5.2.0.tar.gz
+Source0: %{name}-%{version}.tar.gz
 License: MIT License, Copyright (c) 2000, Frank Warmerdam
 Group: Applications/GIS
+Provides: %{name} = %{version}
 
 BuildRoot: %{_builddir}/%{name}-root
 Prefix: %{_prefix}
 
-Conflicts: PROJ.4
+Obsoletes: %{name} < %{version}
+Conflicts: %{name} < %{version}
 
 %description
 This package offers commandline tools and a library for performing respective
@@ -43,8 +45,9 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 %post
-cd /usr/lib64/    #Changes diretory to lib64 
-ln -sf libproj.so.12.0.0 libproj.so.0 #Creates symbolic link libproj.so.0 from libproj.so.12.0.0 
+cd /usr/lib64/    					  #Changes diretory to lib64 
+ln -sf libproj.so.12.0.0 libproj.so.0 #Creates symbolic link libproj.so.0 from libproj.so.12.0.0
+ 
 
 %clean
 rm -rf %{_builddir}/proj-5.2.0

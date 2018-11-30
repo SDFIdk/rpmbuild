@@ -1,12 +1,12 @@
-%define %{name} proj
-%define %{version} 5.2.0
+#%define %{name} proj
+#%define %{version} 5.2.0
 %define PACKAGE_URL https://proj4.org/index.html
 %define _prefix /usr
 
 
 Summary: Cartographic projection software
-Name: %{name}
-Version: %{version}
+Name: proj
+Version: 5.2.0
 Release: 1
 Source0: proj-5.2.0.tar.gz			#Source0: %{name}-%{version}.tar.gz
 License: MIT License, Copyright (c) 2000, Frank Warmerdam

@@ -8,7 +8,8 @@ Summary: Cartographic projection software
 Name: %{name}
 Version: %{version}
 Release: 1
-Source0: %{name}-%{version}.tar.gz
+#Source0: %{name}-%{version}.tar.gz
+Source0: proj-5.2.0.tar.gz
 License: MIT License, Copyright (c) 2000, Frank Warmerdam
 Group: Applications/GIS
 Provides: %{name} = %{version}

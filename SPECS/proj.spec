@@ -1,20 +1,21 @@
-#%define %{name} proj
-#%define %{version} 5.2.0
+%define name proj
+%define version 5.2.0
+%define release 1
 %define PACKAGE_URL https://proj4.org/index.html
 %define _prefix /usr
 
 
 Summary: Cartographic projection software
-Name: proj
-Version: 5.2.0
-Release: 1
-Source0: proj-5.2.0.tar.gz
-License: MIT License, Copyright (c) 2000, Frank Warmerdam
-Group: Applications/GIS
-Provides: %{name} = %{version}
+Name: 	   %{name}
+Version:   %{version}
+Release:   %{release}
+Source0:   proj-5.2.0.tar.gz
+License:   MIT License, Copyright (c) 2000, Frank Warmerdam
+Group:     Applications/GIS
+Provides:  %{name} = %{version}
 
 BuildRoot: %{_builddir}/%{name}-root
-Prefix: %{_prefix}
+Prefix:    %{_prefix}
 
 Obsoletes: %{name} < %{version}
 Conflicts: %{name} < %{version}
@@ -25,9 +26,9 @@ forward and inverse transformation of cartographic data to or from cartesian
 data with a wide range of selectable projection functions.
 
 %package devel
-Summary:	Development files for PROJ
-Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Summary:   Development files for PROJ
+Group:	   Development/Libraries
+Requires:  %{name} = %{version}-%{release}
 
 %description devel
 This package contains libproj and the appropriate header files and man pages.

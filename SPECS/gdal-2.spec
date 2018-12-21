@@ -3,7 +3,7 @@
 # otherwise it complains about some rpaths - which we cannot see any problem with.. "
 #
 Name:           gdal
-Version:        2.3.2
+Version:        2.3.3
 Release:        1%{?dist}
 Summary:        GDAL
 
@@ -13,41 +13,45 @@ URL:            http://www.gdal.org/
 Source0:        http://download.osgeo.org/gdal/%{version}/%{name}-%{version}.tar.gz
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRequires:  libecwj2-devel
-BuildRequires:  giflib-devel
+#BuildRequires:  libecwj2-devel
+#BuildRequires:  giflib-devel
 BuildRequires:  geos-devel
 BuildRequires:  libjpeg-turbo-devel
-BuildRequires:  libtiff-devel
-BuildRequires:  libpng-devel
-BuildRequires:  python-devel
-#BuildRequires:  FileGDB_API
-BuildRequires:  libgeotiff-devel
 BuildRequires:  openjpeg2-devel
+#BuildRequires:  libpng-devel
+#BuildRequires:  python-devel
+#BuildRequires:  libtiff-devel
+#BuildRequires:  libgeotiff-devel
 BuildRequires:  libcurl-devel
-BuildRequires:  oracle-instantclient11.2-devel
+#BuildRequires:  libzstd-devel
+#BuildRequires:  libspatialite-devel
+#BuildRequires:  oracle-instantclient11.2-devel
 #BuildRequires:    
-#BuildRequires:  
-#BuildRequires:  
 
-#Requires:
-Requires:       libecwj2
-Requires:       openjpeg2
+
+#Requires:       libecwj2
+Requires:       geos
 Requires:       libjpeg-turbo
-Requires:       libpng 
-#Requires:       
-#Requires:       
-Requires:      oracle-instantclient11.2-basic
+Requires:       openjpeg2
+#Requires:       libpng 
+#BuildRequires:  libtiff
+#BuildRequires:  libgeotiff
+Requires:       libcurl
+#Requires:       libzstd
+#Requires:       libspatialite
+#Requires:       oracle-instantclient11.2-basic
+
 
 %description
 GDAL Main files
 
-%package devel
-Summary:        GDAL library header files
-Group:          Development/libraries
-BuildRequires:  gdal
+#%package devel
+#Summary:        GDAL library header files
+#Group:          Development/libraries
+##BuildRequires:  gdal
 
-%description devel
-GDAL header files
+#%description devel
+#GDAL header files
 
 %prep
 %setup -q
@@ -57,13 +61,14 @@ sed -i 's|setup.py install|setup.py install --root=%{buildroot}|' swig/python/GN
 
 %build
 #fra gdal-rogue spec-fil
-sed -i 's|@LIBTOOL@|%{_bindir}/libtool|g' GDALmake.opt.in
+#sed -i 's|@LIBTOOL@|%{_bindir}/libtool|g' GDALmake.opt.in
 
-#--with-ecw=/opt/libecw \
-#--with-fgdb=/usr/local \
 #--with-static-proj4 \
 #--disable-rpath \
 #--with-python 
+#--with-ecw=/opt/libecw \
+#--with-zstd=yes\
+#--with-pg \
 
 #https://trac.osgeo.org/gdal/wiki/BuildingOnUnix
 #export ORACLE_HOME=/home/matt/instantclient_11_2 
@@ -74,16 +79,17 @@ sed -i 's|@LIBTOOL@|%{_bindir}/libtool|g' GDALmake.opt.in
 #--with-oci-lib=/home/matt/instantclient_11_2
 
 %configure \
-        --with-ecw=/opt/libecw \
         --with-gif=internal \
-        --with-geos \
-        --with-geotiff \
-        --with-jpeg \
+        --with-geotiff=internal \
+        --with-jpeg=internal \
         --with-libtiff=internal \
-        --with-png \
-        --with-pg \
+        --with-ecw=no \
+        --with-png=internal \
+        --with-openjpeg \
+        --with-geos=yes \
         --with-curl \
-        --with-openjpeg 
+        --with-oci=no \
+        --with-spatialite=no
         
 
 # -j [number] defines # of simultaneous jobs make will start
@@ -178,27 +184,27 @@ rm -rf %{buildroot}
 %attr(755,root,root) /usr/share/vertcs.override.csv
 
 
-%files devel
-%defattr(644,root,root,755)
-#%doc _html/*
-%attr(755,root,root) %{_bindir}/gdal-config
-%attr(755,root,root) %{_libdir}/libgdal.so
-%{_libdir}/libgdal.la
-%{_includedir}/cpl_*.h
-%{_includedir}/cplkeywordparser.h
-%{_includedir}/gdal*.h
-%{_includedir}/gvgcpfit.h
-%{_includedir}/memdataset.h
-%{_includedir}/ogr_*.h
-%{_includedir}/ogrsf_frmts.h
-%{_includedir}/rawdataset.h
-%{_includedir}/thinplatespline.h
-%{_includedir}/vrtdataset.h
-#%{_mandir}/man1/gdal-config.1*
+#%files devel
+#%defattr(644,root,root,755)
+##%doc _html/*
+#%attr(755,root,root) %{_bindir}/gdal-config
+#%attr(755,root,root) %{_libdir}/libgdal.so
+#%{_libdir}/libgdal.la
+#%{_includedir}/cpl_*.h
+#%{_includedir}/cplkeywordparser.h
+#%{_includedir}/gdal*.h
+#%{_includedir}/gvgcpfit.h
+#%{_includedir}/memdataset.h
+#%{_includedir}/ogr_*.h
+#%{_includedir}/ogrsf_frmts.h
+#%{_includedir}/rawdataset.h
+#%{_includedir}/thinplatespline.h
+#%{_includedir}/vrtdataset.h
+##%{_mandir}/man1/gdal-config.1*
 
 %changelog
 * Fri Dec 14 2018 Jonas Lund Nielsen <jolni@sdfe.dk> 2.1.1
-- Upgrade to GDAL 2.3.2
+- Upgrade to GDAL 2.3.3
 
 * Wed Feb 08 2017 Jonas Lund Nielsen <jolni@sdfe.dk> 2.1.0
 - Upgrade to 2.1.3

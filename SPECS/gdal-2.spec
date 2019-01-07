@@ -13,45 +13,49 @@ URL:            http://www.gdal.org/
 Source0:        http://download.osgeo.org/gdal/%{version}/%{name}-%{version}.tar.gz
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-#BuildRequires:  libecwj2-devel
-#BuildRequires:  giflib-devel
 BuildRequires:  geos-devel
-BuildRequires:  libjpeg-turbo-devel
-BuildRequires:  openjpeg2-devel
-#BuildRequires:  libpng-devel
-#BuildRequires:  python-devel
-#BuildRequires:  libtiff-devel
-#BuildRequires:  libgeotiff-devel
+#BuildRequires:  giflib-devel
 BuildRequires:  libcurl-devel
-#BuildRequires:  libzstd-devel
-#BuildRequires:  libspatialite-devel
-#BuildRequires:  oracle-instantclient11.2-devel
-#BuildRequires:    
-
-
-#Requires:       libecwj2
-Requires:       geos
-Requires:       libjpeg-turbo
-Requires:       openjpeg2
-#Requires:       libpng 
-#BuildRequires:  libtiff
+#BuildRequires:  libecwj2-devel
 #BuildRequires:  libgeotiff
-Requires:       libcurl
-#Requires:       libzstd
-#Requires:       libspatialite
-#Requires:       oracle-instantclient11.2-basic
+#BuildRequires:  libgeotiff-devel
+BuildRequires:  libjpeg-turbo-devel
+#BuildRequires:  libpng-devel
+#BuildRequires:  libtiff
+#BuildRequires:  libtiff-devel
+BuildRequires:  libzstd-devel
+#BuildRequires:  libspatialite-devel
+BuildRequires:  openjpeg2-devel
+#BuildRequires:  oracle-instantclient11.2-devel
+BuildRequires:  postgresql11-devel     
+##x86_64             11.1-1PGDG.rhel7             pgdg11 
+##https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat11-11-2.noarch.rpm
+BuildRequires:  proj-devel
+#BuildRequires:  python-devel
 
+Requires:       geos
+Requires:       libcurl
+#Requires:       libecwj2
+Requires:       libjpeg-turbo
+#Requires:       libpng 
+#Requires:       libspatialite
+Requires:       libzstd
+Requires:       openjpeg2
+#Requires:       oracle-instantclient11.2-basic
+Requires:       postgresql11-libs
+##x86_64             11.1-1PGDG.rhel7             pgdg11
+Requires:       proj
 
 %description
 GDAL Main files
 
-#%package devel
-#Summary:        GDAL library header files
-#Group:          Development/libraries
-##BuildRequires:  gdal
+%package devel
+Summary:        GDAL library header files
+Group:          Development/libraries
+#BuildRequires:  gdal
 
-#%description devel
-#GDAL header files
+%description devel
+GDAL header files
 
 %prep
 %setup -q
@@ -67,8 +71,6 @@ sed -i 's|setup.py install|setup.py install --root=%{buildroot}|' swig/python/GN
 #--disable-rpath \
 #--with-python 
 #--with-ecw=/opt/libecw \
-#--with-zstd=yes\
-#--with-pg \
 
 #https://trac.osgeo.org/gdal/wiki/BuildingOnUnix
 #export ORACLE_HOME=/home/matt/instantclient_11_2 
@@ -78,22 +80,24 @@ sed -i 's|setup.py install|setup.py install --root=%{buildroot}|' swig/python/GN
 #--with-oci-include=/home/matt/instantclient_11_2/sdk/include
 #--with-oci-lib=/home/matt/instantclient_11_2
 
-%configure \
-        --with-gif=internal \
-        --with-geotiff=internal \
-        --with-jpeg=internal \
-        --with-libtiff=internal \
-        --with-ecw=no \
-        --with-png=internal \
-        --with-openjpeg \
-        --with-geos=yes \
+%configure --disable-rpath \
         --with-curl \
+        --with-ecw=no \
+        --with-geos=yes \
+        --with-geotiff=internal \
+        --with-gif=internal \
+        --with-jpeg=/usr/lib64 \
+        --with-libtiff=internal \
         --with-oci=no \
-        --with-spatialite=no
+        --with-openjpeg \
+        --with-pg=/usr/pgsql-11/bin \
+        --with-png=internal \
+        --with-spatialite=no \
+        --with-zstd=yes
         
 
 # -j [number] defines # of simultaneous jobs make will start
-make -j 2 %{?_smp_mflags}
+make -j 4 %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
@@ -122,7 +126,45 @@ rm -rf %{buildroot}
 %{_libdir}/lib*
 #%{_libdir}/gdal-%{version}.jar
 %{_libdir}/pkgconfig/gdal.pc
-%attr(755,root,root) /usr/include/internal_qhull_headers.h
+
+%attr(755,root,root) /usr/etc/bash_completion.d/gdal-bash-completion.sh
+%attr(755,root,root) /usr/include/gnm.h
+%attr(755,root,root) /usr/include/gnm_api.h
+%attr(755,root,root) /usr/include/gnmgraph.h
+%attr(755,root,root) /usr/share/default.rsc
+%attr(755,root,root) /usr/share/esri_epsg.wkt
+%attr(755,root,root) /usr/share/gmlasconf.xml
+%attr(755,root,root) /usr/share/gmlasconf.xsd
+%attr(755,root,root) /usr/share/jpfgdgml_AdmArea.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_AdmBdry.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_AdmPt.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_BldA.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_BldL.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_Cntr.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_CommBdry.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_CommPt.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_Cstline.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_ElevPt.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_GCP.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_LeveeEdge.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RailCL.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RdASL.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RdArea.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RdCompt.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RdEdg.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RdMgtBdry.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RdSgmtA.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_RvrMgtBdry.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_SBAPt.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_SBArea.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_SBBdry.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_WA.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_WL.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_WStrA.gfs
+%attr(755,root,root) /usr/share/jpfgdgml_WStrL.gfs
+%attr(755,root,root) /usr/share/pds4_template.xml
+%attr(755,root,root) /usr/share/plscenesconf.json
+
 %attr(755,root,root) /usr/share/GDALLogoBW.svg
 %attr(755,root,root) /usr/share/GDALLogoColor.svg
 %attr(755,root,root) /usr/share/GDALLogoGS.svg
@@ -167,12 +209,8 @@ rm -rf %{buildroot}
 %attr(755,root,root) /usr/share/ruian_vf_v1.gfs
 %attr(755,root,root) /usr/share/s57agencies.csv
 %attr(755,root,root) /usr/share/s57attributes.csv
-%attr(755,root,root) /usr/share/s57attributes_aml.csv
-%attr(755,root,root) /usr/share/s57attributes_iw.csv
 %attr(755,root,root) /usr/share/s57expectedinput.csv
 %attr(755,root,root) /usr/share/s57objectclasses.csv
-%attr(755,root,root) /usr/share/s57objectclasses_aml.csv
-%attr(755,root,root) /usr/share/s57objectclasses_iw.csv
 %attr(755,root,root) /usr/share/seed_2d.dgn
 %attr(755,root,root) /usr/share/seed_3d.dgn
 %attr(755,root,root) /usr/share/stateplane.csv
@@ -184,23 +222,23 @@ rm -rf %{buildroot}
 %attr(755,root,root) /usr/share/vertcs.override.csv
 
 
-#%files devel
-#%defattr(644,root,root,755)
-##%doc _html/*
-#%attr(755,root,root) %{_bindir}/gdal-config
-#%attr(755,root,root) %{_libdir}/libgdal.so
-#%{_libdir}/libgdal.la
-#%{_includedir}/cpl_*.h
-#%{_includedir}/cplkeywordparser.h
-#%{_includedir}/gdal*.h
+%files devel
+%defattr(644,root,root,755)
+#%doc _html/*
+%attr(755,root,root) %{_bindir}/gdal-config
+%{_libdir}/libgdal.so
+%{_libdir}/libgdal.la
+%{_includedir}/cpl_*.h
+%{_includedir}/cplkeywordparser.h
+%{_includedir}/gdal*.h
 #%{_includedir}/gvgcpfit.h
-#%{_includedir}/memdataset.h
-#%{_includedir}/ogr_*.h
-#%{_includedir}/ogrsf_frmts.h
-#%{_includedir}/rawdataset.h
+%{_includedir}/memdataset.h
+%{_includedir}/ogr_*.h
+%{_includedir}/ogrsf_frmts.h
+%{_includedir}/rawdataset.h
 #%{_includedir}/thinplatespline.h
-#%{_includedir}/vrtdataset.h
-##%{_mandir}/man1/gdal-config.1*
+%{_includedir}/vrtdataset.h
+#%{_mandir}/man1/gdal-config.1*
 
 %changelog
 * Fri Dec 14 2018 Jonas Lund Nielsen <jolni@sdfe.dk> 2.1.1

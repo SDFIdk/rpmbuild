@@ -1,6 +1,6 @@
 %define name proj
 %define version 5.2.0
-%define release 1
+%define release 2
 %define PACKAGE_URL https://proj4.org/index.html
 %define _prefix /usr
 
@@ -17,8 +17,8 @@ Provides:  %{name} = %{version}
 BuildRoot: %{_builddir}/%{name}-root
 Prefix:    %{_prefix}
 
-Obsoletes: %{name} < %{version}
-Conflicts: %{name} < %{version}
+Obsoletes: %{name} < %{version}-%{release}
+#Conflicts: %{name} < %{version}
 
 %description
 This package offers commandline tools and a library for performing respective
@@ -47,7 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 cd /usr/lib64/    					  #Changes diretory to lib64 
-ln -sf libproj.so.12.0.0 libproj.so.0 #Creates symbolic link libproj.so.0 from libproj.so.12.0.0
+ln -sf libproj.so.13.1.1 libproj.so.0 #Creates symbolic link libproj.so.0 from libproj.so.13.1.1
  
 
 %clean
@@ -74,5 +74,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS COPYING ChangeLog NEWS README
 
 %changelog
+* Mon Jan 07 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.0.1
+- Updated symlink to libproj.so.0 (libproj.so.13.1.1)
+
 * Wed Nov 28 2018 Jonas Lund Nielsen <jolni@sdfe.dk> 2.0.0
 - Proj 5.2.0 to be built on RHEL7

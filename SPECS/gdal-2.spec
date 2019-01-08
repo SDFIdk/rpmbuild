@@ -3,7 +3,7 @@
 # otherwise it complains about some rpaths - which we cannot see any problem with.. "
 #
 Name:           gdal
-Version:        2.3.3
+Version:        2.4.0
 Release:        1%{?dist}
 Summary:        GDAL
 
@@ -90,9 +90,9 @@ sed -i 's|setup.py install|setup.py install --root=%{buildroot}|' swig/python/GN
         --with-libtiff=internal \
         --with-oci=no \
         --with-openjpeg \
-        --with-pg=/usr/pgsql-11/bin \
+        --with-pg=/usr/pgsql-11/bin/pg_config \
         --with-png=internal \
-        --with-spatialite=no \
+        --with-spatialite=yes \
         --with-zstd=yes
         
 
@@ -241,6 +241,9 @@ rm -rf %{buildroot}
 #%{_mandir}/man1/gdal-config.1*
 
 %changelog
+* Mon Jan 07 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.2.0
+- Upgrade to GDAL 2.4.0
+
 * Fri Dec 14 2018 Jonas Lund Nielsen <jolni@sdfe.dk> 2.1.1
 - Upgrade to GDAL 2.3.3
 

@@ -46,8 +46,8 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 %post
-cd /usr/lib64/    					  #Changes diretory to lib64 
-ln -sf libproj.so.13.1.1 libproj.so.0 #Creates symbolic link libproj.so.0 from libproj.so.13.1.1
+cd /usr/lib64/
+ln -sf libproj.so.13.1.1 libproj.so.0   #Creates symbolic link libproj.so.0 from libproj.so.13.1.1
  
 
 %clean

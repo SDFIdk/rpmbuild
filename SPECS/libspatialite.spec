@@ -57,14 +57,19 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires: freexl-devel
 BuildRequires: geos-devel
-BuildRequires: proj-devel
+BuildRequires: proj-devel >= 5
 BuildRequires: sqlite-devel
 BuildRequires: zlib-devel
-
 %if (0%{?fedora} || 0%{?rhel} > 6)
 BuildRequires: libxml2-devel
 #BuildRequires: postgis
 %endif
+Requires:       freexl
+Requires:       geos
+Requires:       proj >= 5
+Requires:       sqlite
+Requires:       zlib
+Requires:       libxml2
 
 
 %description
@@ -142,7 +147,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Tue Jan 08 2019 Jonas Lund Nielsen <jolni@sdfe.dk> - 4.3.0a-6
-- Rebuilt for RHEL7 
+- Rebuilt for RHEL7, against proj 5.2.0
 - disable tests, fails on "check_sql_stmt"
 
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.3.0a-6

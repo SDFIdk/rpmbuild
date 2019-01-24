@@ -88,36 +88,36 @@ pushd build
                                         #'autodetect' seems not to work in this particular case, although included from https://github.com/mapserver/mapserver/pull/4791
 										#possibly caused by non-Intel 64-bit architecture
 %cmake3 -DINSTALL_LIB_DIR:PATH=/usr/lib64 \
-       -DCMAKE_PREFIX_PATH="/usr/lib64;/usr/pgsql-11" \
-       -DWITH_WMS=ON \
-	   -DWITH_WFS=ON \
-	   -DWITH_WCS=ON \
-	   -DWITH_SOS=ON \
-	   -DWITH_KML=ON \
-	   -DWITH_CLIENT_WFS=ON \
-       -DWITH_CLIENT_WMS=ON \
-	   -DWITH_CURL=ON \
-	   -DWITH_PROJ=ON \
-	   -DWITH_GEOS=ON \
-	   -DWITH_ICONV=ON \
-	   -DWITH_LIBXML2=ON \
-	   -DWITH_OGR=ON \
-	   -DWITH_GDAL=ON \
-	   -DWITH_GIF=ON \
-	   -DWITH_CAIRO=OFF \
-       -DWITH_RSVG=OFF\
-       -DWITH_POSTGIS=ON \
-       -DWITH_ORACLESPATIAL=OFF \
-       -DWITH_FCGI=ON \
-       -DWITH_THREAD_SAFETY=OFF \
-	   -DWITH_PYTHON=OFF \
-       -DWITH_PERL=OFF \
-       -DWITH_JAVA=OFF \
-       -DWITH_PHP=OFF \
-	   -DWITH_APACHE_MODULE=OFF \
-	   -DWITH_FRIBIDI=OFF \
-	   -DWITH_HARFBUZZ=OFF \
-       -DWITH_PROTOBUFC=ON ..
+        -DCMAKE_PREFIX_PATH="/usr/lib64;/usr/pgsql-11" \
+        -DWITH_WMS=ON \
+        -DWITH_WFS=ON \
+        -DWITH_WCS=ON \
+        -DWITH_SOS=ON \
+        -DWITH_KML=ON \
+        -DWITH_CLIENT_WFS=ON \
+        -DWITH_CLIENT_WMS=ON \
+        -DWITH_CURL=ON \
+        -DWITH_PROJ=ON \
+        -DWITH_GEOS=ON \
+        -DWITH_ICONV=ON \
+        -DWITH_LIBXML2=ON \
+        -DWITH_OGR=ON \
+        -DWITH_GDAL=ON \
+        -DWITH_GIF=ON \
+        -DWITH_CAIRO=OFF \
+        -DWITH_RSVG=OFF\
+        -DWITH_POSTGIS=ON \
+        -DWITH_ORACLESPATIAL=OFF \
+        -DWITH_FCGI=ON \
+        -DWITH_THREAD_SAFETY=OFF \
+        -DWITH_PYTHON=OFF \
+        -DWITH_PERL=OFF \
+        -DWITH_JAVA=OFF \
+        -DWITH_PHP=OFF \
+        -DWITH_APACHE_MODULE=OFF \
+        -DWITH_FRIBIDI=OFF \
+        -DWITH_HARFBUZZ=OFF \
+        -DWITH_PROTOBUFC=ON ..
 	   
 make -j 2 %{?_smp_mflags}
 #?make -j 4

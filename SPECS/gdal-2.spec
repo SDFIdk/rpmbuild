@@ -24,7 +24,7 @@ BuildRequires:  libjpeg-turbo-devel
 #BuildRequires:  libtiff
 #BuildRequires:  libtiff-devel
 BuildRequires:  libzstd-devel
-#BuildRequires:  libspatialite-devel
+BuildRequires:  libspatialite-devel
 BuildRequires:  openjpeg2-devel
 #BuildRequires:  oracle-instantclient11.2-devel
 BuildRequires:  postgresql11-devel     
@@ -38,12 +38,13 @@ Requires:       libcurl
 #Requires:       libecwj2
 Requires:       libjpeg-turbo
 #Requires:       libpng 
-#Requires:       libspatialite
+Requires:       libspatialite
 Requires:       libzstd
 Requires:       openjpeg2
 #Requires:       oracle-instantclient11.2-basic
 Requires:       postgresql11-libs
 ##x86_64             11.1-1PGDG.rhel7             pgdg11
+##https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat11-11-2.noarch.rpm
 Requires:       proj
 
 %description
@@ -111,6 +112,11 @@ make install DESTDIR=%{buildroot}
 %endif
 mkdir -p %{buildroot}/%{lib_dir}/gdalplugins
 
+# Delete undesired libtool archives 
+# copied from libspatialite.spec, since gdal-devel at installation complains about 
+# libgdal.la already present from non-devel)
+#find %{buildroot} -type f -name "*.la" -delete
+
 %clean
 rm -rf %{buildroot}
 #rm -f /usr/local/lib/{libgeos*,libltidsdk*,libtbb*,liblti_lidar_dsdk*,liblaslib.so} && rm -f /usr/local/include/*.h && rm -rf /usr/local/include/{lidar,nitf}
@@ -126,11 +132,12 @@ rm -rf %{buildroot}
 %{_libdir}/lib*
 #%{_libdir}/gdal-%{version}.jar
 %{_libdir}/pkgconfig/gdal.pc
-
 %attr(755,root,root) /usr/etc/bash_completion.d/gdal-bash-completion.sh
 %attr(755,root,root) /usr/include/gnm.h
 %attr(755,root,root) /usr/include/gnm_api.h
 %attr(755,root,root) /usr/include/gnmgraph.h
+%attr(755,root,root) /usr/share/bag_template.xml
+%attr(755,root,root) /usr/share/eedaconf.json
 %attr(755,root,root) /usr/share/default.rsc
 %attr(755,root,root) /usr/share/esri_epsg.wkt
 %attr(755,root,root) /usr/share/gmlasconf.xml
@@ -164,7 +171,6 @@ rm -rf %{buildroot}
 %attr(755,root,root) /usr/share/jpfgdgml_WStrL.gfs
 %attr(755,root,root) /usr/share/pds4_template.xml
 %attr(755,root,root) /usr/share/plscenesconf.json
-
 %attr(755,root,root) /usr/share/GDALLogoBW.svg
 %attr(755,root,root) /usr/share/GDALLogoColor.svg
 %attr(755,root,root) /usr/share/GDALLogoGS.svg
@@ -227,7 +233,9 @@ rm -rf %{buildroot}
 #%doc _html/*
 %attr(755,root,root) %{_bindir}/gdal-config
 %{_libdir}/libgdal.so
-%{_libdir}/libgdal.la
+# left out since gdal-devel at installation complains about 
+# libgdal.la already present from non-devel)
+#%{_libdir}/libgdal.la
 %{_includedir}/cpl_*.h
 %{_includedir}/cplkeywordparser.h
 %{_includedir}/gdal*.h
@@ -241,8 +249,9 @@ rm -rf %{buildroot}
 #%{_mandir}/man1/gdal-config.1*
 
 %changelog
-* Mon Jan 07 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.2.0
+* Mon Jan 14 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.2.0
 - Upgrade to GDAL 2.4.0
+- leave out libgdal.la from devel
 
 * Fri Dec 14 2018 Jonas Lund Nielsen <jolni@sdfe.dk> 2.1.1
 - Upgrade to GDAL 2.3.3

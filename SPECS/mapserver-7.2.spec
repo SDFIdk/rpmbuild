@@ -1,7 +1,7 @@
 %define MS_REL %{nil}
 Name:           mapserver%{MS_REL}
-Version:        7.2.1
-Release:        1%{?dist}
+Version:        7.2.2
+Release:        2%{?dist}
 Summary:        Environment for building spatially-enabled internet applications
 Group:          Development/Tools
 License:        BSD
@@ -17,9 +17,10 @@ Requires:       giflib
 Requires:       geos
 Requires:       httpd
 Requires:       freetype >= 2.8
-#Requires:       instantclient          #OCI
+Requires:       instantclient
 #Requires:       cairo >= 1.15
 Requires:       libxml2
+Requires:       mod_fcgid
 Requires:       postgresql11-libs       
 ##x86_64             11.1-1PGDG.rhel7             pgdg11
 Requires:       proj >= 5.0
@@ -36,10 +37,10 @@ BuildRequires:  gdal-devel
 BuildRequires:  geos-devel
 BuildRequires:  giflib-devel
 #BuildRequires:  httpd-devel
+BuildRequires:  instantclient
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 #BuildRequires:  mysql-devel
-#BuildRequires:  instantclient-devel    #OCI
 #BuildRequires:  pam-devel              #what does this even do?
 BuildRequires:  postgresql11-devel
 ##x86_64             11.1-1PGDG.rhel7             pgdg11
@@ -51,7 +52,6 @@ BuildRequires:  zlib-devel
 #BuildRequires:  perl(ExtUtils::MakeMaker) python-devel
 #BuildRequires: java-1.7.0-openjdk-devel php-devel
 #BuildRequires:  fribidi-devel harfbuzz-devel cairo-devel
-
 
 %description
 Mapserver is an internet mapping program that converts GIS data to
@@ -80,15 +80,17 @@ popd
 %build
 mkdir build
 pushd build
-#export ORACLE_HOME="/usr/lib64/oracle/12.1/client64"
+
 #-DCMAKE_PREFIX_PATH="/usr/lib64/oracle/12.1/client64;/usr/lib64/oracle/12.1/client64/sdk/include" \
 
-##Please note: Comments not to be mixed with active -D cmake-directives. It is a one-liner :-)
 #-DINSTALL_LIB_DIR:PATH=/usr/lib64 \	#necessary for cmake to install into lib64 as RHEL expects
                                         #'autodetect' seems not to work in this particular case, although included from https://github.com/mapserver/mapserver/pull/4791
 										#possibly caused by non-Intel 64-bit architecture
+
+export ORACLE_HOME="/usr/lib64/oracle/12.1/client64"
+
 %cmake3 -DINSTALL_LIB_DIR:PATH=/usr/lib64 \
-        -DCMAKE_PREFIX_PATH="/usr/lib64;/usr/pgsql-11" \
+        -DCMAKE_PREFIX_PATH="/usr/lib64;/usr/pgsql-11;/usr/lib64/oracle/12.1/client64/sdk/include" \
         -DWITH_WMS=ON \
         -DWITH_WFS=ON \
         -DWITH_WCS=ON \
@@ -107,7 +109,7 @@ pushd build
         -DWITH_CAIRO=OFF \
         -DWITH_RSVG=OFF\
         -DWITH_POSTGIS=ON \
-        -DWITH_ORACLESPATIAL=OFF \
+        -DWITH_ORACLESPATIAL=ON \
         -DWITH_FCGI=ON \
         -DWITH_THREAD_SAFETY=OFF \
         -DWITH_PYTHON=OFF \
@@ -129,7 +131,7 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
-mkdir -p %{buildroot}%{_libexecdir}
+#mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/%{name}
 mkdir -p %{buildroot}%{_includedir}/%{name}/
@@ -140,17 +142,15 @@ cd build
 make DESTDIR=%{buildroot} install %{?_smp_mflags}
 
 
-#?#mkdir -p %{buildroot}%{_libexecdir}			#for old placement of mapserv
+#mkdir -p %{buildroot}%{_libexecdir}			    #for old placement of mapserv
 mkdir -p %{buildroot}/%{_var}/www/cgi-bin		#for direct apache-placement of mapserv
 #?mkdir -p %{buildroot}%{_sysconfdir}/php.d
 #?mkdir -p %{buildroot}%{_libdir}/php/modules
 #?mkdir -p %{buildroot}%{_datadir}/%{name}
 
-#?# destination adjusted to include version, hoping for smoother transition with multiple working instances in cgi-bin
-#?#mv %{buildroot}%{_bindir}/mapserv %{buildroot}%{_libexecdir}/mapserv-%{version}			#for old placement of mapserv
 cp %{buildroot}%{_bindir}/mapserv %{buildroot}%{_var}/www/cgi-bin/mapserv-%{version}		#for direct apache-placement of mapserv
 cp %{buildroot}%{_bindir}/mapserv %{buildroot}%{_var}/www/cgi-bin/mapserv-%{version}.fcgi	#for direct apache-placement of mapserv fcgi
-
+#mv %{buildroot}%{_bindir}/mapserv %{buildroot}%{_libexecdir}/mapserv-%{version} 			#for old placement of mapserv
 
 # cleanup junks
 for junk in {*.pod,*.bs,.packlist} ; do
@@ -166,7 +166,7 @@ done
 %{_bindir}/mapserv
 %{_var}/www/cgi-bin/mapserv-%{version}
 %{_var}/www/cgi-bin/mapserv-%{version}.fcgi
-#%{_libexecdir}/mapserv-%{version}		#for old placement of mapserv
+#%{_libexecdir}/mapserv-%{version}
 %{_bindir}/msencrypt
 %{_bindir}/scalebar
 %{_bindir}/shp2img
@@ -184,9 +184,16 @@ done
 
 
 %changelog
-* Mon Jan 14 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 0.8.0
-- MapServer 7.2.1 to be built on RHEL7 (preliminary version)
+* Wed Feb 20 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 1.0.2
+- added Requires: mod_fcgid
+
+* Thu Feb 02 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 1.0.1
+- Upgraded to MapServer 7.2.2
+
+* Mon Jan 28 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 1.0.0
+- MapServer 7.2.1 to built on RHEL7
 - Name of binary again includes minor version (uses macro %{version})
+- including self-built instantclient
 
 * Wed Jun 28 2017 Jonas Lund Nielsen <jolni@sdfe.dk> 0.6.0
 - Reverted to MapServer 7.0.4

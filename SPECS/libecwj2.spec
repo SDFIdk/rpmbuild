@@ -50,5 +50,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jan 24 2019 - Jonas Lund Nielsen - jolni@sdfe.dk
+- Initial build on RHEL7
+
 * Fri Aug 09 2013 - Jesper Kihlberg - jekih@gst.dk
 - Initial package creation

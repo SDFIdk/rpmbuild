@@ -3,7 +3,7 @@
 # otherwise it complains about some rpaths - which we cannot see any problem with.. "
 #
 Name:           gdal
-Version:        2.4.0
+Version:        2.4.1
 Release:        1%{?dist}
 Summary:        GDAL
 
@@ -14,34 +14,26 @@ Source0:        http://download.osgeo.org/gdal/%{version}/%{name}-%{version}.tar
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:  geos-devel
-#BuildRequires:  giflib-devel
 BuildRequires:  libcurl-devel
-#BuildRequires:  libecwj2-devel
-#BuildRequires:  libgeotiff
-#BuildRequires:  libgeotiff-devel
+BuildRequires:  libecwj2
 BuildRequires:  libjpeg-turbo-devel
-#BuildRequires:  libpng-devel
-#BuildRequires:  libtiff
-#BuildRequires:  libtiff-devel
 BuildRequires:  libzstd-devel
 BuildRequires:  libspatialite-devel
 BuildRequires:  openjpeg2-devel
-#BuildRequires:  oracle-instantclient11.2-devel
+BuildRequires:  instantclient
 BuildRequires:  postgresql11-devel     
 ##x86_64             11.1-1PGDG.rhel7             pgdg11 
 ##https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat11-11-2.noarch.rpm
 BuildRequires:  proj-devel
-#BuildRequires:  python-devel
 
 Requires:       geos
+Requires:       instantclient
 Requires:       libcurl
-#Requires:       libecwj2
+Requires:       libecwj2
 Requires:       libjpeg-turbo
-#Requires:       libpng 
 Requires:       libspatialite
 Requires:       libzstd
 Requires:       openjpeg2
-#Requires:       oracle-instantclient11.2-basic
 Requires:       postgresql11-libs
 ##x86_64             11.1-1PGDG.rhel7             pgdg11
 ##https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat11-11-2.noarch.rpm
@@ -68,28 +60,25 @@ sed -i 's|setup.py install|setup.py install --root=%{buildroot}|' swig/python/GN
 #fra gdal-rogue spec-fil
 #sed -i 's|@LIBTOOL@|%{_bindir}/libtool|g' GDALmake.opt.in
 
-#--with-static-proj4 \
-#--disable-rpath \
-#--with-python 
-#--with-ecw=/opt/libecw \
-
 #https://trac.osgeo.org/gdal/wiki/BuildingOnUnix
-#export ORACLE_HOME=/home/matt/instantclient_11_2 
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/matt/instantclient_11_2
+
+#export ORACLE_HOME=/usr/lib64/oracle/12.1/client64
 #export PATH=$PATH:$ORACLE_HOME
-#export NLS_LANG=American.America.WE8ISO8859P1 (this may not be essential) 
-#--with-oci-include=/home/matt/instantclient_11_2/sdk/include
-#--with-oci-lib=/home/matt/instantclient_11_2
+#--with-static-proj4 \
+
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/oracle/12.1/client64
 
 %configure --disable-rpath \
         --with-curl \
-        --with-ecw=no \
+        --with-ecw=/opt/libecw \
         --with-geos=yes \
         --with-geotiff=internal \
         --with-gif=internal \
         --with-jpeg=/usr/lib64 \
         --with-libtiff=internal \
-        --with-oci=no \
+        --with-oci=/usr/lib64/oracle/12.1/client64 \
+        --with-oci-include=/usr/lib64/oracle/12.1/client64/sdk/include \
+        --with-oci-lib=/usr/lib64/oracle/12.1/client64 \
         --with-openjpeg \
         --with-pg=/usr/pgsql-11/bin/pg_config \
         --with-png=internal \
@@ -249,6 +238,15 @@ rm -rf %{buildroot}
 #%{_mandir}/man1/gdal-config.1*
 
 %changelog
+* Thu May 02 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.2.2
+- update to GDAL 2.4.1
+- --with-oci changed from 'yes' to path, and skip 
+  LD_LIBRARY_PATH (possibly 'LDFLAGS' and/or 'CPPFLAGS' 
+  settings can help too)
+
+* Mon Jan 28 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.2.1
+- add support for ecw and oracle instantclient
+
 * Mon Jan 14 2019 Jonas Lund Nielsen <jolni@sdfe.dk> 2.2.0
 - Upgrade to GDAL 2.4.0
 - leave out libgdal.la from devel
